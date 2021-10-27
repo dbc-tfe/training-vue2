@@ -1,5 +1,11 @@
 <template>
   <div class="home container mt-3">
+    <loading
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="fullPage"
+    ></loading>
     <h5>CRUD API</h5>
     <button type="button" class="btn btn-primary" @click="_add()">
       Tambah
@@ -105,13 +111,21 @@
 import { Modal } from "bootstrap";
 // let myModal = new Bootstrap.Modal(document.getElementById("exampleModal"));
 import axios from "axios";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+
 export default {
   name: "Home",
+  components: {
+    Loading,
+  },
   data() {
     return {
       modal: null,
       listData: [],
       tmpData: {},
+      isLoading: false,
+      fullPage: true,
     };
   },
   created() {
@@ -126,6 +140,7 @@ export default {
     },
     async _save() {
       try {
+        this.isLoading = true;
         if (this.tmpData.id >= 0) {
           await axios.post("updateData", this.tmpData);
         } else {
@@ -135,13 +150,20 @@ export default {
         this.modal.show();
         this.tmpData = {};
         this.modal.hide();
-      } catch (error) {}
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     async _delete(data) {
       try {
+        this.isLoading = true;
         await axios.post("deleteData", { id: data.id });
         await this._getData();
-      } catch (error) {}
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     _edit(data) {
       this.modal.show();
@@ -155,9 +177,13 @@ export default {
     },
     async _getData() {
       try {
+        this.isLoading = true;
         const res = await axios.get("getData");
         this.listData = res.data;
-      } catch (error) {}
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
   },
 };
