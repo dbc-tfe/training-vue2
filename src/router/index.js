@@ -24,6 +24,11 @@ const routes = [
     path: '/crud_vuex',
     name: 'CrudVuex',
     component: () => import(/* webpackChunkName: "crud_vuex" */ '../views/CrudVuex.vue')
+  },
+  {
+    path: '/crud_api',
+    name: 'CrudApi',
+    component: () => import(/* webpackChunkName: "crud_api" */ '../views/CrudApi.vue')
   }
 ]
 

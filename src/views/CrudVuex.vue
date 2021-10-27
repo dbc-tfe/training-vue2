@@ -1,5 +1,6 @@
 <template>
   <div class="home container mt-3">
+    <h5>CRUD VUEX</h5>
     <button type="button" class="btn btn-primary" @click="_add()">
       Tambah
     </button>

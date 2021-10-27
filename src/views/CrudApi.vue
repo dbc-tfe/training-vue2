@@ -1,6 +1,6 @@
 <template>
   <div class="home container mt-3">
-    <h5>CRUD</h5>
+    <h5>CRUD API</h5>
     <button type="button" class="btn btn-primary" @click="_add()">
       Tambah
     </button>
@@ -25,10 +25,18 @@
           <td>{{ data.telp }}</td>
           <td>
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-warning" @click="_edit(i)">
+              <button
+                type="button"
+                class="btn btn-warning"
+                @click="_edit(data)"
+              >
                 Edit
               </button>
-              <button type="button" class="btn btn-danger" @click="_delete(i)">
+              <button
+                type="button"
+                class="btn btn-danger"
+                @click="_delete(data)"
+              >
                 Delete
               </button>
             </div>
@@ -96,6 +104,7 @@
 <script>
 import { Modal } from "bootstrap";
 // let myModal = new Bootstrap.Modal(document.getElementById("exampleModal"));
+import axios from "axios";
 export default {
   name: "Home",
   data() {
@@ -106,9 +115,7 @@ export default {
     };
   },
   created() {
-    if (JSON.parse(window.localStorage.getItem("list")) != null) {
-      this.listData = JSON.parse(window.localStorage.getItem("list"));
-    }
+    this._getData();
   },
   mounted() {
     this.modal = new Modal(document.getElementById("exampleModal"));
@@ -117,41 +124,40 @@ export default {
     _add() {
       this.modal.show();
     },
-    _save() {
-      if (this.tmpData.id >= 0) {
-        console.log("update");
-        this.listData[this.tmpData.id].nik = this.tmpData.nik;
-        this.listData[this.tmpData.id].nama = this.tmpData.nama;
-        this.listData[this.tmpData.id].email = this.tmpData.email;
-        this.listData[this.tmpData.id].telp = this.tmpData.telp;
-      } else {
-        console.log("insert");
-        console.log(this.listData);
-        console.log(this.tmpData);
-        this.listData.push(this.tmpData);
-      }
-
-      this._setPersistent();
-      this.modal.show();
-      this.tmpData = {};
-      this.modal.hide();
+    async _save() {
+      try {
+        if (this.tmpData.id >= 0) {
+          await axios.post("updateData", this.tmpData);
+        } else {
+          await axios.post("createData", this.tmpData);
+        }
+        await this._getData();
+        this.modal.show();
+        this.tmpData = {};
+        this.modal.hide();
+      } catch (error) {}
     },
-    _delete(idx) {
-      this.listData.splice(idx, 1);
-      this._setPersistent();
+    async _delete(data) {
+      try {
+        await axios.post("deleteData", { id: data.id });
+        await this._getData();
+      } catch (error) {}
     },
-    _edit(idx) {
+    _edit(data) {
       this.modal.show();
       this.tmpData = {
-        id: idx,
-        nik: this.listData[idx].nik,
-        nama: this.listData[idx].nama,
-        email: this.listData[idx].email,
-        telp: this.listData[idx].telp,
+        id: data.id,
+        nik: data.nik,
+        nama: data.nama,
+        email: data.email,
+        telp: data.telp,
       };
     },
-    _setPersistent() {
-      window.localStorage.setItem("list", JSON.stringify(this.listData));
+    async _getData() {
+      try {
+        const res = await axios.get("getData");
+        this.listData = res.data;
+      } catch (error) {}
     },
   },
 };

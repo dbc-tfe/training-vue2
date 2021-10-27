@@ -28,6 +28,9 @@
             <router-link to="/crud_vuex"
               ><a class="nav-link" href="#">CRUD VUEX</a></router-link
             >
+            <router-link to="/crud_api"
+              ><a class="nav-link" href="#">CRUD API</a></router-link
+            >
           </div>
         </div>
       </div>
@@ -35,6 +38,18 @@
     <router-view />
   </div>
 </template>
+
+<script>
+import axios from "axios";
+export default {
+  created() {
+    axios.defaults.baseURL = "https://3e12-103-144-209-66.ngrok.io/";
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGktdnVlLmxva2FsXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYzNTMxODU1NiwiZXhwIjoxNjM1MzIyMTU2LCJuYmYiOjE2MzUzMTg1NTYsImp0aSI6IklNNW9nYTNxVkkxY0dxRDciLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.DUTqwuKvse2L3jVFVaKp1oA59mxVmbvqKy4pJulsvZc`;
+  },
+};
+</script>
 
 <style>
 </style>
